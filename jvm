@@ -32,7 +32,7 @@ change-jdk() {
     desiredVersion=$jvm/installed-versions/open-jdk-$1
     if [ -d "$desiredVersion" ]; then
         rm -Rf current/*
-        cp -a $desiredVersion/* $currentDir/
+        sudo cp -a $desiredVersion/* $currentDir/
         echo "jvm: Switched to Java v$1"
     else
         echo "jvm: You do not appear to have Java v$1 installed! Try running 'jvm install $1 first!"
@@ -145,11 +145,55 @@ case $cmd in
         ;;
         
     uninstall)
-        echo "jvm: uninstall not implemented"
+        case $javaVersion in
+        
+            latest | 16)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-16
+                ;;
+            
+            15)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-15
+                ;;
+            
+            14)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-14
+                ;;
+            
+            13)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-13
+                ;;
+                
+            12)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-12
+                ;;
+
+            11)
+		rm -Rf ~/.jvm/installed-versions/open-jdk-11
+                ;;
+                
+            10)
+		rm -Rf ~/.jvm/installed-versions/open-jdk-10
+                ;;
+                
+            9)
+		rm -Rf ~/.jvm/installed-versions/open-jdk-9
+                ;;
+                
+            8)
+		rm -Rf ~/.jvm/installed-versions/open-jdk-8
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
         ;;
 
     *)
-        echo "jvm: help command not implemented"
+        echo "usage: jvm [command] [version]\n\nCommands: use, install, uninstall"
     
 esac
-
