@@ -1,0 +1,155 @@
+#!/bin/bash
+
+jvm=$HOME/.jvm
+
+install-jdk() {
+    version=$1
+    downloadLink=$2
+    versionDir=$jvm/installed-versions/open-jdk-$version
+    
+    
+    echo "jvm: Attempting to install Java v$version..."
+    
+    if [ -d "$versionDir" ]; then
+        echo "jvm: Java $version is already installed! Type 'jvm use $version' to switch to it!"
+    else
+        tarball=$jvm/tmp/openjdk-$version.tar.gz
+        curl $downloadLink --output $tarball
+        tar -xf $tarball -C $jvm/tmp
+        extracted=$jvm/tmp/`tar -tzf $tarball | head -1 | cut -f1 -d"/"`
+        mkdir $versionDir
+        mv $extracted/* $versionDir
+        rm -Rf $extracted
+        rm $tarball
+        echo "jvm: Java v$version installed!"
+    fi
+    
+}
+
+change-jdk() {
+    
+    currentDir=$jvm/current
+    desiredVersion=$jvm/installed-versions/open-jdk-$1
+    if [ -d "$desiredVersion" ]; then
+        rm -Rf current/*
+        cp -a $desiredVersion/* $currentDir/
+        echo "jvm: Switched to Java v$1"
+    else
+        echo "jvm: You do not appear to have Java v$1 installed! Try running 'jvm install $1 first!"
+    fi
+    
+}
+
+cmd=$1
+javaVersion=$2
+
+case $cmd in
+
+    install)
+        case $javaVersion in
+        
+            latest | 16)
+                install-jdk 16 https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-16.0.1_linux-x64_bin.tar.gz
+                ;;
+            
+            15)
+                install-jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz
+                ;;
+            
+            14)
+                install-jdk 14 https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz
+                ;;
+            
+            13)
+                install-jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz
+                ;;
+                
+            12)
+                install-jdk 12 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+                ;;
+
+            11)
+                install-jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+                ;;
+                
+            10)
+                install-jdk 10 https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz
+                ;;
+                
+            9)
+                install-jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz
+                ;;
+                
+            8)
+                install-jdk 8 https://innov8dev-resources.s3.amazonaws.com/openjdk-8.tar.gz
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
+        ;;
+    
+
+    use)
+        case $javaVersion in
+        
+            latest | 16)
+                change-jdk 16
+                ;;
+            
+            15)
+                change-jdk 15
+                ;;
+            
+            14)
+                change-jdk 14
+                ;;
+            
+            13)
+                change-jdk 13
+                ;;
+                
+            12)
+                change-jdk 12
+                ;;
+
+            11)
+                change-jdk 11
+                ;;
+                
+            10)
+                change-jdk 10
+                ;;
+                
+            9)
+                change-jdk 9
+                ;;
+                
+            8)
+                change-jdk 8
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
+        ;;
+        
+    uninstall)
+        echo "jvm: uninstall not implemented"
+        ;;
+
+    *)
+        echo "jvm: help command not implemented"
+    
+esac
+
