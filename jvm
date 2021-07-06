@@ -32,10 +32,10 @@ change-jdk() {
     desiredVersion=$jvm/installed-versions/open-jdk-$1
     if [ -d "$desiredVersion" ]; then
         rm -Rf current/*
-        sudo cp -a $desiredVersion/* $currentDir/
+        cp -Rf $desiredVersion/* $currentDir/
         echo "jvm: Switched to Java v$1"
     else
-        echo "jvm: You do not appear to have Java v$1 installed! Try running 'jvm install $1 first!"
+        echo "jvm: You do not appear to have Java v$1 installed! Try running 'jvm install $1' first!"
     fi
     
 }
