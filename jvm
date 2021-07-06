@@ -194,6 +194,6 @@ case $cmd in
         ;;
 
     *)
-        echo "usage: jvm [command] [version]\n\nCommands: use, install, uninstall"
+        printf "usage: jvm [command] [version]\n\nCommands: use, install, uninstall"
     
 esac
