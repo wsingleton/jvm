@@ -16,7 +16,7 @@ Run uninstall.sh to uninstall everything related to JVM. Note this will break yo
 - Switch to another installed version: `jvm use #` (e.g. `jvm use 8`)
 
 ## Attribution
-- The compressed binaries for Java v9 to Java v16 are provided by [](https://openjdk.java.net/)
+- The compressed binaries for Java v9 to Java v16 are provided by [OpenJDK](https://openjdk.java.net/)
 
 ## Limitations
 - Only known to work on Ubuntu 20.04.2 LTS
