@@ -2,6 +2,10 @@
 
 A simple command line tool for installing and switching between Java versions.
 
+## Prerequisites
+
+It is recommended that you uninstall any previously installed versions of Java before using this tool. Failure to do so will result in the inability to conveniently switch versions.
+
 ## Installation
 
 Run install.sh to set up JVM automatically. Restart your terminal afterwards, or type `source ~/.bashrc` to refresh it.
