@@ -1,7 +1,28 @@
 #!/bin/bash
 
+# Convenience variable to hold reference to location of primary jvm directory
 jvm=$HOME/.jvm
 
+#
+# Prints a provided message to stderr and exits the script
+#
+# Arguments:
+#    $1 = error message to be printed
+#
+error-exit {
+    echo "$1" 1>&2
+    exit 1
+}
+
+#
+# Attempts to install the specified version of Java using the provided link. If the
+# specified version is already installed, it will not be reinstalled and the user
+# will be notified. 
+#
+# Arguments:
+#    $1 = version of Java to be downloaded
+#    $2 = JDK download link (should provide a tarball)
+#
 install-jdk() {
     version=$1
     downloadLink=$2
@@ -14,25 +35,33 @@ install-jdk() {
         echo "jvm: Java $version is already installed! Type 'jvm use $version' to switch to it!"
     else
         tarball=$jvm/tmp/openjdk-$version.tar.gz
-        curl $downloadLink --output $tarball
-        tar -xf $tarball -C $jvm/tmp
+        curl $downloadLink --output $tarball || error-exit "Failed to download JDK tarball from $downloadLink! Aborting installation!"
+        tar -xf $tarball -C $jvm/tmp || error-exit "Failed to unzip JDK tarball! Aborting installation!"
         extracted=$jvm/tmp/`tar -tzf $tarball | head -1 | cut -f1 -d"/"`
         mkdir $versionDir
         mv $extracted/* $versionDir
-        rm -Rf $extracted
+        rm -Rf $extracted 
         rm $tarball
         echo "jvm: Java v$version installed!"
     fi
     
 }
 
+#
+# Attempts to change the currently used version of Java. If the targeted Java version
+# is installed, then it will be used. If the targeted Java version is not installed,
+# the user will be notified to install it first.
+# 
+# Arguments:
+#    $1 = target version of Java to switch to
+#
 change-jdk() {
     
     currentDir=$jvm/current
     desiredVersion=$jvm/installed-versions/open-jdk-$1
     if [ -d "$desiredVersion" ]; then
-        rm -Rf current/*
-        cp -Rf $desiredVersion/* $currentDir/
+        rm -Rf $currentDir/*
+        cp -Rf $desiredVersion/* $currentDir/ 
         echo "jvm: Switched to Java v$1"
     else
         echo "jvm: You do not appear to have Java v$1 installed! Try running 'jvm install $1' first!"
@@ -40,6 +69,16 @@ change-jdk() {
     
 }
 
+#
+# Primary script logic
+#
+# Determines what command was given to the jvm invocation: install, use, uninstall, and if 
+# none of these then usage information will be displayed.
+# 
+# Arguments:
+#    $1 = provided command
+#    $2 = specified Java version
+#
 cmd=$1
 javaVersion=$2
 
