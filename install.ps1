@@ -15,6 +15,6 @@ $acl.SetAccessRule($AccessRule)
 $acl | Set-Acl ~\.jvm
 
 # Set the environment Path variable to add in the new .jvm bin directory
-[Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path","User") + ";"+(Resolve-Path ~\.jvm\bin) + ";"+(Resolve-Path ~\.jvm\current\bin), "User")
-[Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path","User") + ";"+(Resolve-Path ~\.jvm\bin) + ";" + (Resolve-Path ~\.jvm\current\bin), "Process")
+[Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path","User") + ";"+(Resolve-Path ~\.jvm\bin) + ";"+(Resolve-Path ~\.jvm\current)+"\bin", "User")
+[Environment]::SetEnvironmentVariable("Path",[Environment]::GetEnvironmentVariable("Path","User") + ";"+(Resolve-Path ~\.jvm\bin) + ";" + (Resolve-Path ~\.jvm\current)+"\bin", "Process")
 Write-Output 'finished installing'
