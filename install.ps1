@@ -1,11 +1,11 @@
 # Direct copy from shell script
 # Create application directories if they do not exist
 if(-not (Test-Path ~\.jvm)) {
-    mkdir ~\.jvm
-    mkdir ~\.jvm\bin
-    mkdir ~\.jvm\current
-    mkdir ~\.jvm\installed-versions
-    mkdir ~\.jvm\tmp
+    mkdir ~\.jvm | Out-Null
+    mkdir ~\.jvm\bin | Out-Null
+    mkdir ~\.jvm\current | Out-Null
+    mkdir ~\.jvm\installed-versions | Out-Null
+    mkdir ~\.jvm\tmp | Out-Null
 }
 # Copy jvm file to created bin directory and make it an executable
 Copy-Item .\jvm.ps1 ~\.jvm\bin\jvm.ps1
