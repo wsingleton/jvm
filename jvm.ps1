@@ -169,6 +169,6 @@ switch ($cmd) {
     }
 }
     Default {
-        Write-Output "usage: jvm [command] [version]\n\nCommands: use, install, uninstall"
+        Write-Output "usage: jvm [command] [version]`n`nCommands: use, install, uninstall"
     }
 }
