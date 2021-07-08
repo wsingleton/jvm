@@ -10,5 +10,5 @@ foreach ($path in $userPath.split(';')){
     }
 }
 [Environment]::SetEnvironmentVariable("Path","$newPath","User")
-[Environment]::SetEnvironmentVariable("Path","$newPath","Process")
+# [Environment]::SetEnvironmentVariable("Path","$newPath","Process")
 Write-Output "completed uninstallation"
