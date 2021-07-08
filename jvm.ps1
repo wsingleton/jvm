@@ -33,15 +33,21 @@ function Install-JDK {
         Write-Output "jvm: Java $version is already installed! Type 'jvm use $version' to switch to it!"
     }
     else {
-        $err = @()
-        $zipped = "$jvm\tmp\openjdk-$version.zip"
-        Invoke-WebRequest $downloadLink -OutFile $zipped -ErrorAction Stop -ErrorVariable err 
-        if ($err -gt 0) {
-            Exit-Error "Failed to download JDK zip from $downloadLink! Aborting installation!"
-        }
-        $extracted = (Expand-Archive -PassThru -Path $zipped -DestinationPath "$jvm\tmp" -ErrorAction Stop -EV err)
-        if ($err -gt 0) {
-            Exit-Error "Failed to unzip JDK tarball! Aborting installation!"
+        try {
+            $err = @()
+            $zipped = "$jvm\tmp\openjdk-$version.zip"
+            Write-Output "Collecting the archived information"
+            Invoke-WebRequest $downloadLink -OutFile $zipped -EA SilentlyContinue -EV err 
+            if ($err -gt 0) {
+                Exit-Error "Failed to download JDK zip from $downloadLink! Aborting installation!"
+            }
+            Write-Output "Attempting to extract the archive"
+            $extracted = (Expand-Archive -PassThru -Path $zipped -DestinationPath "$jvm\tmp" -EA SilentlyContinue -EV err)
+            if ($err -gt 0) {
+                Exit-Error "Failed to unzip JDK tarball! Aborting installation!"
+            }
+        } catch [ParameterBindingValidationException] {
+            Write-Error "There was an issue resolving a parameter within the script. `nThis is normally caused by the archive module not being updated. `nRun Install-Module Microsoft.Powershell.Archive -Force in admin mode to resolve the issue. `nIf the issue does not subside, submit an issue to the GitHub Repository."
         }
         mkdir $versionDir
         Copy-Item -Recurse -Force $extracted $versionDir
@@ -85,6 +91,7 @@ function Set-JDK {
 #    $1 = provided command
 #    $2 = specified Java version
 #
+
 $cmd = $args[0]
 $javaVersion = $args[1]
 
