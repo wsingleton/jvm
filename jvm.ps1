@@ -1,0 +1,1 @@
+Write-Output "running the java version manager"
