@@ -23,7 +23,8 @@ Run uninstall.sh to uninstall everything related to JVM. Note this will break yo
 - The compressed binaries for Java v9 to Java v16 are provided by [OpenJDK](https://openjdk.java.net/)
 
 ## Limitations
-- Only known to work on Ubuntu 20.04.2 LTS
+- Only known to work on Ubuntu 19 and 20. Should work on any Linux distribution.
 - The Java v8 compressed binaries are provided by the developer of this tool. 
 - Windows version 10 and Windows server 2019
 - Java 10 for windows is not currently available
+- No support for Java v7 or below
