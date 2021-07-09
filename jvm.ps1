@@ -51,8 +51,7 @@ function Install-JDK {
         }
         mkdir $versionDir
         Copy-Item -Recurse -Force $extracted $versionDir
-        Remove-Item -Recurse -Force $extracted | Out-Null
-        Remove-Item $zipped
+        Remove-Item -Recurse -Force (Resolve-Path ~\.jvm\tmp\*)
         Write-Output "jvm: Java v$version installed!"
         
     }
