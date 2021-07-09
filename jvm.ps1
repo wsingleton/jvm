@@ -97,6 +97,9 @@ $javaVersion = $args[1]
 switch ($cmd) {
     install {
         switch ($javaVersion) {
+            latest {
+                Install-JDK latest https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_windows-x64_bin.zip
+            }
             16 {
                 Install-JDK 16 https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_windows-x64_bin.zip
             }
@@ -135,6 +138,9 @@ switch ($cmd) {
     }
     use {
         switch ($javaVersion) {
+            latest {
+                Set-JDK latest
+            }
             16 {
                 Set-JDK 16
             }
@@ -172,7 +178,10 @@ switch ($cmd) {
     }
     uninstall {
         switch ($javaVersion) {
-            { $_ -lt 17 -And $_ -gt 7 } {
+            latest {
+                Remove-Item -Recurse -Force "$jvm\installed-versions\open-jdk-latest"
+            }
+            { $_ -lt 17 -And $_ -gt 7} {
                 Remove-Item -Recurse -Force "$jvm\installed-versions\open-jdk-$_"
             }
             { $_ -lt 8 } {
