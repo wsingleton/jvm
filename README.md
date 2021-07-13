@@ -7,7 +7,6 @@ A simple command line tool for installing and switching between JDK versions.
 It is recommended that you uninstall any previously installed versions of Java before using this tool. Failure to do so will result in the inability to conveniently switch versions.
 
 ## Installation
----
 
 ### Unix/Linux Machines
 
