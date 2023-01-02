@@ -84,43 +84,63 @@ javaVersion=$2
 
 case $cmd in
 
+    list)
+        echo "jvm: Listing installed Java versions..."
+        echo "jvm: Installed versions:"
+        for dir in $jvm/installed-versions/*; do
+            echo "jvm:   `basename $dir`"
+        done
+        ;;
+
     install)
         case $javaVersion in
         
-            latest | 16)
-                install-jdk 16 https://download.java.net/java/GA/jdk16.0.1/7147401fd7354114ac51ef3e1328291f/9/GPL/openjdk-16.0.1_linux-x64_bin.tar.gz
+            latest | 19)
+                install-jdk 19 https://download.java.net/openjdk/jdk19/ri/openjdk-19+36_linux-x64_bin.tar.gz
+                ;;
+            
+            18)
+                install-jdk 18 https://download.java.net/openjdk/jdk18/ri/openjdk-18+36_linux-x64_bin.tar.gz
+                ;;
+            
+            17)
+                install-jdk 17 https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_linux-x64_bin.tar.gz
+                ;;
+            
+            16)
+                install-jdk 16 https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_linux-x64_bin.tar.gz
                 ;;
             
             15)
-                install-jdk 15 https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_linux-x64_bin.tar.gz
+                install-jdk 15 https://download.java.net/openjdk/jdk15/ri/openjdk-15+36_linux-x64_bin.tar.gz
                 ;;
             
             14)
-                install-jdk 14 https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_linux-x64_bin.tar.gz
+                install-jdk 14 https://download.java.net/openjdk/jdk14/ri/openjdk-14+36_linux-x64_bin.tar.gz
                 ;;
             
             13)
-                install-jdk 13 https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz
+                install-jdk 13 https://download.java.net/openjdk/jdk13/ri/openjdk-13+33_linux-x64_bin.tar.gz
                 ;;
                 
             12)
-                install-jdk 12 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+                install-jdk 12 https://download.java.net/openjdk/jdk12/ri/openjdk-12+32_linux-x64_bin.tar.gz
                 ;;
 
             11)
-                install-jdk 11 https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+                install-jdk 11 https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_linux-x64_bin.tar.gz
                 ;;
                 
             10)
-                install-jdk 10 https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_linux-x64_bin.tar.gz
+                install-jdk 10 https://download.java.net/openjdk/jdk10/ri/openjdk-10+44_linux-x64_bin_ri.tar.gz
                 ;;
                 
             9)
-                install-jdk 9 https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_linux-x64_bin.tar.gz
+                install-jdk 9 https://download.java.net/openjdk/jdk9/ri/openjdk-9+181_linux-x64_ri.zip
                 ;;
                 
             8)
-                install-jdk 8 https://innov8dev-resources.s3.amazonaws.com/openjdk-8.tar.gz
+                install-jdk 8 https://download.java.net/openjdk/jdk8u42/ri/openjdk-8u42-b03-linux-x64-14_jul_2022.tar.gz
                 ;;
                 
             7 | 6 | 5 | 4 | 3 | 2 | 1)
@@ -137,7 +157,19 @@ case $cmd in
     use)
         case $javaVersion in
         
-            latest | 16)
+            latest | 19)
+                change-jdk 19
+                ;;
+
+            18)
+                change-jdk 18
+                ;;
+
+            17)
+                change-jdk 17
+                ;;
+
+            16)
                 change-jdk 16
                 ;;
             
@@ -186,7 +218,19 @@ case $cmd in
     uninstall)
         case $javaVersion in
         
-            latest | 16)
+            latest | 19)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-19
+                ;;
+            
+            18)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-18
+                ;;
+            
+            17)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-17
+                ;;
+            
+            16)
                 rm -Rf ~/.jvm/installed-versions/open-jdk-16
                 ;;
             
@@ -207,19 +251,19 @@ case $cmd in
                 ;;
 
             11)
-		rm -Rf ~/.jvm/installed-versions/open-jdk-11
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-11
                 ;;
                 
             10)
-		rm -Rf ~/.jvm/installed-versions/open-jdk-10
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-10
                 ;;
                 
             9)
-		rm -Rf ~/.jvm/installed-versions/open-jdk-9
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-9
                 ;;
                 
             8)
-		rm -Rf ~/.jvm/installed-versions/open-jdk-8
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-8
                 ;;
                 
             7 | 6 | 5 | 4 | 3 | 2 | 1)
@@ -233,6 +277,7 @@ case $cmd in
         ;;
 
     *)
-        printf "usage: jvm [command] [version]\n\nCommands: use, install, uninstall"
+        printf "usage: jvm [command] [version]\n\nCommands: use, list, install, uninstall"
+	    echo
     
 esac
