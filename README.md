@@ -39,16 +39,16 @@ Navigate to `./platforms/windows/bin` and run `uninstall.ps1` in Powershell to u
 - Installing the latest version of Java (v16): `jvm install latest`
 - Installing a specific version of Java: `jvm install #` (e.g. `jvm install 8`)
 > Note, this command will not automatically set your version to the newly installed version. That needs to be done in the next step.
+- List all installed version: `jvm list`
 - Switch to another installed version: `jvm use #` (e.g. `jvm use 8`)
 
 ## Attribution
-- The compressed binaries for Java v9 to Java v16 are provided by [OpenJDK](https://openjdk.java.net/)
-- The Java v8 compressed binaries for linux are provided by the developer of this tool, which was originally sourced from OpenJDK.
+- The compressed binaries for Java v8 to Java v19 are provided by [OpenJDK](https://openjdk.java.net/)
 
 ## Platform Support
-- Ubuntu v19 and v20 (suspected to be compatible will all Linux distributions)
-- Windows 10
-- Windows Server 2019
+- Ubuntu v22 (suspected to be compatible will all Linux distributions)
+- Windows 11
+- Windows Server 2022
 
 ## Limitations
 - No support for Java v10 on Windows
