@@ -36,7 +36,7 @@ Navigate to `./platforms/windows/bin` and run `uninstall.ps1` in Powershell to u
 
 ---
 ## Usage
-- Installing the latest version of Java (v16): `jvm install latest`
+- Installing the latest version of Java (v19): `jvm install latest`
 - Installing a specific version of Java: `jvm install #` (e.g. `jvm install 8`)
 > Note, this command will not automatically set your version to the newly installed version. That needs to be done in the next step.
 - List all installed version: `jvm list`
