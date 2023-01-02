@@ -99,7 +99,16 @@ switch ($cmd) {
     install {
         switch ($javaVersion) {
             latest {
-                Install-JDK latest https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_windows-x64_bin.zip
+                Install-JDK latest https://download.java.net/openjdk/jdk19/ri/openjdk-19+36_windows-x64_bin.zip
+            }
+            19 {
+                Install-JDK 19 https://download.java.net/openjdk/jdk19/ri/openjdk-19+36_windows-x64_bin.zip
+            }
+            18 {
+                Install-JDK 18 https://download.java.net/openjdk/jdk18/ri/openjdk-18+36_windows-x64_bin.zip
+            }
+            17 {
+                Install-JDK 17 https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_windows-x64_bin.zip
             }
             16 {
                 Install-JDK 16 https://download.java.net/openjdk/jdk16/ri/openjdk-16+36_windows-x64_bin.zip
@@ -127,7 +136,7 @@ switch ($cmd) {
                 Install-JDK 9 https://download.java.net/openjdk/jdk9/ri/jdk-9+181_windows-x64_ri.zip
             }
             8 {
-                Install-JDK 8 https://download.java.net/openjdk/jdk8u41/ri/openjdk-8u41-b04-windows-i586-14_jan_2020.zip
+                Install-JDK 8 https://download.java.net/openjdk/jdk8u42/ri/openjdk-8u42-b03-windows-i586-14_jul_2022.zip
             }
             { $_ -lt 8 } {
                 Write-Output "jvm: No support for Java version 7 and below"
@@ -141,6 +150,15 @@ switch ($cmd) {
         switch ($javaVersion) {
             latest {
                 Set-JDK latest
+            }
+            19 {
+                Set-JDK 19
+            }
+            18 {
+                Set-JDK 18
+            }
+            17 {
+                Set-JDK 17
             }
             16 {
                 Set-JDK 16
@@ -182,7 +200,7 @@ switch ($cmd) {
             latest {
                 Remove-Item -Recurse -Force "$jvm\installed-versions\open-jdk-latest"
             }
-            { $_ -lt 17 -And $_ -gt 7} {
+            { $_ -lt 20 -And $_ -gt 7} {
                 Remove-Item -Recurse -Force "$jvm\installed-versions\open-jdk-$_"
             }
             { $_ -lt 8 } {
