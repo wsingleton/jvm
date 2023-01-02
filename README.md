@@ -51,6 +51,6 @@ Navigate to `./platforms/windows/bin` and run `uninstall.ps1` in Powershell to u
 - Windows Server 2022
 
 ## Limitations
-- No support for Java v10 on Windows
+- No support for Java v10 on Windows (due to licence agreements)
 - No support for Java v7 or below
 - Does not work correctly with Git Bash for Windows
