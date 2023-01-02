@@ -10,6 +10,7 @@ mkdir ~\.jvm\current\bin | Out-Null
 
 # Copy jvm file to created bin directory and make it an executable
 Copy-Item .\jvm.ps1 ~\.jvm\bin\jvm.ps1
+Copy-Item .\jvm.bat ~\.jvm\bin\jvm.bat
 
 # change file ACL permissions for user
 $acl = Get-Acl .\jvm.ps1

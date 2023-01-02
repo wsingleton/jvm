@@ -42,14 +42,15 @@ function Install-JDK {
                 Exit-Error "Failed to download JDK zip from $downloadLink! Aborting installation!"
             }
             Write-Output "Attempting to extract the archive"
-            $extracted = (Expand-Archive -PassThru -Path $zipped -DestinationPath "$jvm\tmp" -EA SilentlyContinue -EV err)
+		Expand-Archive -Path $zipped -DestinationPath "$jvm\tmp" -EA SilentlyContinue -EV err
+            $extracted = (Get-ChildItem -Path "$jvm\tmp" -Directory -Filter *$version* | Select-Object -ExpandProperty FullName)
             if ($err -gt 0) {
                 Exit-Error "Failed to unzip JDK tarball! Aborting installation!"
             }
-        } catch [ParameterBindingValidationException] {
+        } catch {
             Write-Error "There was an issue resolving a parameter within the script. `nThis is normally caused by the archive module not being updated. `nRun Install-Module Microsoft.Powershell.Archive -Force in admin mode to resolve the issue. `nIf the issue does not subside, submit an issue to the GitHub Repository."
-        }
-        mkdir $versionDir
+        	Write-Host $_
+	  }
         Copy-Item -Recurse -Force $extracted $versionDir
         Remove-Item -Recurse -Force (Resolve-Path ~\.jvm\tmp\*)
         Write-Output "jvm: Java v$version installed!"
