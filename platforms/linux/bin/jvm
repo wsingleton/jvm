@@ -84,6 +84,14 @@ javaVersion=$2
 
 case $cmd in
 
+    list)
+        echo "jvm: Listing installed Java versions..."
+        echo "jvm: Installed versions:"
+        for dir in $jvm/installed-versions/*; do
+            echo "jvm:   `basename $dir`"
+        done
+        ;;
+
     install)
         case $javaVersion in
         
@@ -269,7 +277,7 @@ case $cmd in
         ;;
 
     *)
-        printf "usage: jvm [command] [version]\n\nCommands: use, install, uninstall"
+        printf "usage: jvm [command] [version]\n\nCommands: use, list, install, uninstall"
 	    echo
     
 esac

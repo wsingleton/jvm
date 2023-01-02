@@ -96,6 +96,13 @@ $cmd = $args[0]
 $javaVersion = $args[1]
 
 switch ($cmd) {
+    list {
+        Write-Output "jvm: Listing installed Java versions..."
+        Write-Output "jvm: Installed versions:"
+        Get-ChildItem -Path "$jvm\installed-versions" -Directory | ForEach-Object {
+            Write-Output "jvm:   $(Split-Path $_ -Leaf)"
+        }
+    }
     install {
         switch ($javaVersion) {
             latest {
@@ -212,6 +219,6 @@ switch ($cmd) {
         }
     }
     Default {
-        Write-Output "usage: jvm [command] [version]`n`nCommands: use, install, uninstall"
+        Write-Output "usage: jvm [command] [version]`n`nCommands: use, list, install, uninstall"
     }
 }
