@@ -1,0 +1,368 @@
+#!/bin/bash
+
+# Convenience variable to hold reference to location of primary jvm directory
+jvm=$HOME/.jvm
+
+#
+# Prints a provided message to stderr and exits the script
+#
+# Arguments:
+#    $1 = error message to be printed
+#
+error-exit() {
+    echo "$1" 1>&2
+    exit 1
+}
+
+#
+# Attempts to install the specified version of Java using the provided link. If the
+# specified version is already installed, it will not be reinstalled and the user
+# will be notified. 
+#
+# Arguments:
+#    $1 = version of Java to be downloaded
+#    $2 = file type (e.g. zip or tar)
+#    $3 = JDK download link (should provide a tarball)
+#
+install-jdk() {
+    version=$1
+    fileType=$2
+    downloadLink=$3
+    versionDir=$jvm/installed-versions/open-jdk-$version
+    
+    
+    echo "jvm: Attempting to install Java v$version..."
+    
+    if [ -d "$versionDir" ]; then
+        echo "jvm: Java $version is already installed! Type 'jvm use $version' to switch to it!"
+    else
+        tarball=$jvm/tmp/openjdk-$version.tar.gz
+        zipfile=$jvm/tmp/openjdk-$version.zip
+        tempDir=$jvm/tmp
+        downloadFile=""
+
+        # Determine the download file name based on file type
+        if [ "$fileType" == "tar" ]; then
+            downloadFile=$tarball
+        elif [ "$fileType" == "zip" ]; then
+            downloadFile=$zipfile
+        else
+            error_exit "Unsupported file type: $fileType. Aborting installation!"
+        fi
+
+		echo "Installing Java v$version from $downloadLink"
+        curl $downloadLink --output $downloadFile || error-exit "Failed to download JDK $fileType from $downloadLink! Aborting installation!"
+        
+        if [ "$fileType" == "tar" ]; then
+            tar -xf $tarball -C $jvm/tmp || error-exit "Failed to unpack JDK tarball! Aborting installation!"
+            extracted=$(tar -tzf $tarball | head -1 | cut -f1 -d"/")
+        elif [ "$fileType" == "zip" ]; then
+            unzip $zipfile -d $tempDir || error-exit "Failed to unzip JDK zipfile! Aborting installation!"
+            extracted=$(unzip -Z1 $zipfile | head -1 | cut -f1 -d"/")
+        fi
+
+        
+        mkdir $versionDir
+        mv $tempDir/$extracted/* $versionDir
+        
+        rm -Rf $tempDir/$extracted 
+        rm $downloadFile
+        
+        echo "jvm: Java v$version installed!"
+    fi
+}
+
+#
+# Attempts to change the currently used version of Java. If the targeted Java version
+# is installed, then it will be used. If the targeted Java version is not installed,
+# the user will be notified to install it first.
+# 
+# Arguments:
+#    $1 = target version of Java to switch to
+#
+change-jdk() {
+    
+    currentDir=$jvm/current
+    desiredVersion=$jvm/installed-versions/open-jdk-$1
+    if [ -d "$desiredVersion" ]; then
+        rm -Rf $currentDir/*
+        cp -Rf $desiredVersion/* $currentDir/ 
+        echo "jvm: Switched to Java v$1"
+    else
+        echo "jvm: You do not appear to have Java v$1 installed! Try running 'jvm install $1' first!"
+    fi
+    
+}
+
+#
+# Checks current version of JDK installed and in use. Takes no arguments.
+#
+check-current-jdk() {
+    current_version_output=$(java -version 2>&1)
+	java_version=""
+	
+	if echo "$current_version_output" | grep -q "version \"1\."; then
+		java_version=$(echo "$current_version_output" | grep 'version' | sed -E 's/.*version "1\.([0-9]+)\..*"/\1/')
+	else
+		java_version=$(echo "$current_version_output" | grep 'version' | sed -E 's/.*version "([0-9]+)[^"]*".*/\1/')
+	fi
+	
+	if [[ -n "$java_version" ]]; then
+      echo "You are currently using Java v$java_version"
+	else
+	  echo "Unable to determine current Java version. Please manually check using 'java -version'"
+	fi
+}
+
+#
+# Primary script logic
+#
+# Determines what command was given to the jvm invocation: install, use, uninstall, and if 
+# none of these then usage information will be displayed.
+# 
+# Arguments:
+#    $1 = provided command
+#    $2 = specified Java version
+#
+cmd=$1
+javaVersion=$2
+
+case $cmd in
+
+    list)
+        echo "jvm: Listing installed Java versions..."
+        echo "jvm: Installed versions:"
+        for dir in $jvm/installed-versions/*; do
+            echo "jvm:   `basename $dir`"
+        done
+        ;;
+
+    install)
+        case $javaVersion in
+
+            latest | 22)
+                install-jdk 22 zip https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_windows-x64_bin.zip
+                ;;
+
+            latest-lts | 21)
+                install-jdk 21 zip https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_windows-x64_bin.zip
+                ;;
+
+            20)
+                install-jdk 20 zip https://download.java.net/java/GA/jdk20.0.2/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-20.0.2_windows-x64_bin.zip
+                ;;
+        
+            19)
+                install-jdk 19 zip https://download.java.net/java/GA/jdk19.0.1/afdd2e245b014143b62ccb916125e3ce/10/GPL/openjdk-19.0.1_windows-x64_bin.zip
+                ;;
+            
+            18)
+                install-jdk 18 zip https://download.java.net/java/GA/jdk18.0.2/f6ad4b4450fd4d298113270ec84f30ee/9/GPL/openjdk-18.0.2_windows-x64_bin.zip
+                ;;
+            
+            17)
+                install-jdk 17 zip https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_windows-x64_bin.zip
+                ;;
+            
+            16)
+                install-jdk 16 zip https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_windows-x64_bin.zip
+                ;;
+            
+            15)
+                install-jdk 15 zip https://download.java.net/java/GA/jdk15.0.2/0d1cfde4252546c6931946de8db48ee2/7/GPL/openjdk-15.0.2_windows-x64_bin.zip
+                ;;
+            
+            14)
+                install-jdk 14 zip https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_windows-x64_bin.zip
+                ;;
+            
+            13)
+                install-jdk 13 zip https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_windows-x64_bin.zip
+                ;;
+                
+            12)
+                install-jdk 12 zip https://download.java.net/java/GA/jdk12.0.2/e482c34c86bd4bf8b56c0b35558996b9/10/GPL/openjdk-12.0.2_windows-x64_bin.zip
+                ;;
+
+            11)
+                install-jdk 11 zip https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip
+                ;;
+                
+            10)
+                install-jdk 10 tar https://download.java.net/java/GA/jdk10/10.0.2/19aef61b38124481863b1413dce1855f/13/openjdk-10.0.2_windows-x64_bin.tar.gz
+                ;;
+                
+            9)
+                install-jdk 9 tar https://download.java.net/java/GA/jdk9/9.0.4/binaries/openjdk-9.0.4_windows-x64_bin.tar.gz
+                ;;
+                
+            8)
+                install-jdk 8 zip https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u422-b05/openlogic-openjdk-8u422-b05-windows-x64.zip
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
+        ;;
+    
+
+    use)
+        case $javaVersion in
+        
+            latest | 22)
+                change-jdk 22
+                ;;
+                
+            latest-lts | 21)
+                change-jdk 21
+                ;;
+
+            20)
+                change-jdk 20
+                ;;
+
+            19)
+                change-jdk 19
+                ;;
+
+            18)
+                change-jdk 18
+                ;;
+
+            17)
+                change-jdk 17
+                ;;
+
+            16)
+                change-jdk 16
+                ;;
+            
+            15)
+                change-jdk 15
+                ;;
+            
+            14)
+                change-jdk 14
+                ;;
+            
+            13)
+                change-jdk 13
+                ;;
+                
+            12)
+                change-jdk 12
+                ;;
+
+            11)
+                change-jdk 11
+                ;;
+                
+            10)
+                change-jdk 10
+                ;;
+                
+            9)
+                change-jdk 9
+                ;;
+                
+            8)
+                change-jdk 8
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
+        ;;
+        
+    uninstall)
+        case $javaVersion in
+        
+            22)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-22
+                ;;
+            
+            21)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-21
+                ;;
+
+            20)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-20
+                ;;
+            
+            19)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-19
+                ;;
+            
+            18)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-18
+                ;;
+            
+            17)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-17
+                ;;
+            
+            16)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-16
+                ;;
+            
+            15)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-15
+                ;;
+            
+            14)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-14
+                ;;
+            
+            13)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-13
+                ;;
+                
+            12)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-12
+                ;;
+
+            11)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-11
+                ;;
+                
+            10)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-10
+                ;;
+                
+            9)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-9
+                ;;
+                
+            8)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-8
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
+        ;;
+	
+	current)
+        check-current-jdk
+		;;
+
+    *)
+        printf "usage: jvm [command] [version]\n\nCommands: use, list, install, uninstall"
+	    echo
+    
+esac
