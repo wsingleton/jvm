@@ -285,7 +285,76 @@ case $cmd in
         ;;
         
     uninstall)
-        rm -Rf ~/.jvm/installed-versions/open-jdk-$javaVersion
+        case $javaVersion in
+        
+            22)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-22
+                ;;
+            
+            21)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-21
+                ;;
+
+            20)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-20
+                ;;
+            
+            19)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-19
+                ;;
+            
+            18)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-18
+                ;;
+            
+            17)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-17
+                ;;
+            
+            16)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-16
+                ;;
+            
+            15)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-15
+                ;;
+            
+            14)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-14
+                ;;
+            
+            13)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-13
+                ;;
+                
+            12)
+                rm -Rf ~/.jvm/installed-versions/open-jdk-12
+                ;;
+
+            11)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-11
+                ;;
+                
+            10)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-10
+                ;;
+                
+            9)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-9
+                ;;
+                
+            8)
+		        rm -Rf ~/.jvm/installed-versions/open-jdk-8
+                ;;
+                
+            7 | 6 | 5 | 4 | 3 | 2 | 1)
+                echo "jvm: No support for Java version 7 and below"
+                ;;
+            
+            *) 
+                echo "jvm: Unknown version specified"
+                ;;
+        esac
         ;;
 	
 	current)
