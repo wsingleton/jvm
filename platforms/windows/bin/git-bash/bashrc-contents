@@ -1,0 +1,44 @@
+
+# Setting Java Version Manager environment variables
+export JAVA_HOME=$HOME/.jvm/current/bin
+export PATH=$HOME/.jvm/bin:$JAVA_HOME:$PATH
+
+# Setup JVM auto-detection functionality (based on presence of .jvmrc file in a directory)
+jvm_auto_switch() {
+  if [ -f .jvmrc ]; then
+    desired_version=$(cat .jvmrc)
+
+    # Check if the desired version is valid
+    if [[ ! $desired_version =~ ^(8|9|10|11|12|13|14|15|16|17|18|19|20|21|22)$ ]]; then
+      echo "Invalid Java version specified in .jvmrc. Supported versions are 8 through 22."
+      return
+    fi
+
+    #Check if the desired version is already installed and in use
+    current_version_output=$(jvm current)
+    current_version=""
+    if [[ $current_version_output =~ You\ are\ currently\ using\ Java\ v([0-9]+) ]]; then
+      current_version="${BASH_REMATCH[1]}"
+    else
+      echo "jvm: Failed to determine the current Java version. Attempting to install Java v$desired_version."
+	  jvm install "$desired_version" && jvm use "$desired_version"
+	  echo "Switched to Java v$desired_version as specified in .jvmrc"
+      return 0
+    fi
+
+    # Check if the desired version is already in use
+    if [ "$desired_version" == "$current_version" ]; then
+      return 0
+    fi
+
+    jvm install "$desired_version" && jvm use "$desired_version"
+    echo "Switched to Java v$desired_version as specified in .jvmrc"
+  fi
+}
+
+jvm_cd () {
+  builtin cd "$@" || return
+  jvm_auto_switch
+}
+
+alias cd=jvm_cd
