@@ -10,7 +10,7 @@ jvm=$HOME/.jvm
 #    $1 = error message to be printed
 #
 error-exit() {
-    echo "$1" 1>&2
+    echo "jvm: $1" 1>&2
     exit 1
 }
 
@@ -73,6 +73,31 @@ install-jdk() {
 }
 
 #
+# Attempts to uninstall the specified version of Java. Prints an error message to the user
+# if an invalid version of Java is provided. Does nothing if the specified version is not 
+# already installed.
+# 
+# Arguments:
+#    $1 = target version of Java to uninstall
+#
+uninstall-jdk() {
+	# Validate the provided Java version argument
+	if ! [[ "$1" =~ ^(8|9|1[0-9]|2[0-2])$ ]]; then
+	  error-exit "Invalid Java version specified. Supported versions are 8 through 22."
+	fi
+
+	# Check if the specified version is installed
+	installDir="$HOME/.jvm/installed-versions/open-jdk-$1"
+	if [ -d "$installDir" ]; then
+	  # Remove the directory corresponding to the specified version
+	  rm -Rf "$installDir"
+      echo "jvm: Uninstalled Java v$1."
+	else 
+	  echo "jvm: Java v$1 is not installed. Nothing to uninstall."
+	fi
+}
+
+#
 # Attempts to change the currently used version of Java. If the targeted Java version
 # is installed, then it will be used. If the targeted Java version is not installed,
 # the user will be notified to install it first.
@@ -84,6 +109,14 @@ change-jdk() {
     
     currentDir=$jvm/current
     desiredVersion=$jvm/installed-versions/open-jdk-$1
+	
+	# Validate the provided Java version argument
+	if ! [[ "$1" =~ ^(8|9|1[0-9]|2[0-2])$ ]]; then
+	  echo "jvm: Invalid Java version specified. Supported versions are 8 through 22."
+	  return 1
+	fi
+	
+	# Check if the desired version is already installed 
     if [ -d "$desiredVersion" ]; then
         rm -Rf $currentDir/*
         cp -Rf $desiredVersion/* $currentDir/ 
@@ -98,6 +131,12 @@ change-jdk() {
 # Checks current version of JDK installed and in use. Takes no arguments.
 #
 check-current-jdk() {
+	if ! command -v java &> /dev/null; then
+      echo "jvm: Your environment is not currently configured to use any version of Java."
+      echo "jvm: Use 'jvm install #' to download your preferred version and then 'jvm use #' to use it!"
+      return 1
+    fi
+
     current_version_output=$(java -version 2>&1)
 	java_version=""
 	
@@ -108,9 +147,9 @@ check-current-jdk() {
 	fi
 	
 	if [[ -n "$java_version" ]]; then
-      echo "You are currently using Java v$java_version"
+      echo "jvm: You are currently using Java v$java_version"
 	else
-	  echo "Unable to determine current Java version. Please manually check using 'java -version'"
+	  error-exit "Unable to determine current Java version. Please manually check using 'java -version'"
 	fi
 }
 
@@ -212,149 +251,11 @@ case $cmd in
     
 
     use)
-        case $javaVersion in
-        
-            latest | 22)
-                change-jdk 22
-                ;;
-                
-            latest-lts | 21)
-                change-jdk 21
-                ;;
-
-            20)
-                change-jdk 20
-                ;;
-
-            19)
-                change-jdk 19
-                ;;
-
-            18)
-                change-jdk 18
-                ;;
-
-            17)
-                change-jdk 17
-                ;;
-
-            16)
-                change-jdk 16
-                ;;
-            
-            15)
-                change-jdk 15
-                ;;
-            
-            14)
-                change-jdk 14
-                ;;
-            
-            13)
-                change-jdk 13
-                ;;
-                
-            12)
-                change-jdk 12
-                ;;
-
-            11)
-                change-jdk 11
-                ;;
-                
-            10)
-                change-jdk 10
-                ;;
-                
-            9)
-                change-jdk 9
-                ;;
-                
-            8)
-                change-jdk 8
-                ;;
-                
-            7 | 6 | 5 | 4 | 3 | 2 | 1)
-                echo "jvm: No support for Java version 7 and below"
-                ;;
-            
-            *) 
-                echo "jvm: Unknown version specified"
-                ;;
-        esac
+        change-jdk $javaVersion
         ;;
         
     uninstall)
-        case $javaVersion in
-        
-            22)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-22
-                ;;
-            
-            21)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-21
-                ;;
-
-            20)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-20
-                ;;
-            
-            19)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-19
-                ;;
-            
-            18)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-18
-                ;;
-            
-            17)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-17
-                ;;
-            
-            16)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-16
-                ;;
-            
-            15)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-15
-                ;;
-            
-            14)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-14
-                ;;
-            
-            13)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-13
-                ;;
-                
-            12)
-                rm -Rf ~/.jvm/installed-versions/open-jdk-12
-                ;;
-
-            11)
-		        rm -Rf ~/.jvm/installed-versions/open-jdk-11
-                ;;
-                
-            10)
-		        rm -Rf ~/.jvm/installed-versions/open-jdk-10
-                ;;
-                
-            9)
-		        rm -Rf ~/.jvm/installed-versions/open-jdk-9
-                ;;
-                
-            8)
-		        rm -Rf ~/.jvm/installed-versions/open-jdk-8
-                ;;
-                
-            7 | 6 | 5 | 4 | 3 | 2 | 1)
-                echo "jvm: No support for Java version 7 and below"
-                ;;
-            
-            *) 
-                echo "jvm: Unknown version specified"
-                ;;
-        esac
+		uninstall-jdk $javaVersion
         ;;
 	
 	current)
@@ -362,7 +263,7 @@ case $cmd in
 		;;
 
     *)
-        printf "usage: jvm [command] [version]\n\nCommands: use, list, install, uninstall"
+        printf "usage: jvm [command] [version]\n\nCommands: use, list, current, install, uninstall"
 	    echo
     
 esac

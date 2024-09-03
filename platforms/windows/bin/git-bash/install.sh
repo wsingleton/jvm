@@ -12,5 +12,5 @@ cp ./jvm ~/.jvm/bin/jvm
 chmod +x ~/.jvm/bin/jvm
 
 # Add location of jvm executable and location of current Java version bin to PATH
-echo export PATH=\$HOME/.jvm/bin:\$HOME/.jvm/current/bin:\$PATH >> $HOME/.bashrc
+cat bashrc-contents >> $HOME/.bashrc
 
