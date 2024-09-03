@@ -1,6 +1,6 @@
 
 # Setting Java Version Manager environment variables
-export JAVA_HOME=$HOME/.jvm/current/bin
+export JAVA_HOME=$HOME/.jvm/current
 export PATH=$HOME/.jvm/bin:$JAVA_HOME:$PATH
 
 # Setup JVM auto-detection functionality (based on presence of .jvmrc file in a directory)
