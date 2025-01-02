@@ -11,6 +11,22 @@ mkdir ~/.jvm/tmp
 cp ./jvm ~/.jvm/bin/jvm
 chmod +x ~/.jvm/bin/jvm
 
-# Add location of jvm executable and location of current Java version bin to PATH
-echo export PATH=\$HOME/.jvm/bin:\$HOME/.jvm/current/bin:\$PATH >> $HOME/.bashrc
+# Update shell init file to include jvm executables in PATH
+#
+# Arguments:
+#     $1 = shell init file
+add_to_rc() {
+    path_update="export PATH=\$HOME/.jvm/bin:\$HOME/.jvm/current/bin:\$PATH";
+    
+    # Only update the file if needed
+    if ! grep -q "$path_update" "$1"; then
+	echo $path_update >> $1;
+    fi
+}
+
+if [ "$SHELL" == "/bin/bash" ]; then
+    add_to_rc $HOME/.bashrc;
+elif [ "$SHELL" == "/bin/zsh" ]; then
+    add_to_rc $HOME/.zshrc;
+fi
 
